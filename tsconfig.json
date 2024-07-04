@@ -6,6 +6,7 @@
       "experimentalDecorators": true,
       "emitDecoratorMetadata": true,
       "moduleResolution": "Node",
+      "removeComments": false,
       "outDir": "dist",
     }
   }

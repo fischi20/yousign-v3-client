@@ -1,4 +1,6 @@
 import { $fetch, type $Fetch } from "ofetch";
+export * from "./types";
+
 import type {
   SignatureRequest,
   CreateSignatureRequestOptions,
@@ -12,6 +14,7 @@ import type {
   CertificateData,
   Events,
 } from "./types";
+
 import { GenHooks, noHook } from "./decorators";
 
 import { createHooks } from "hookable";

@@ -467,34 +467,7 @@ export type CertificateData = {
   };
 };
 
-export type YouSignHooks = {
-  onTryActivate: (signatureRequestId: string) => void;
-  onActivated: (signatureRequest: SignatureRequestActivateResponse) => void;
-  onCreateSignatureRequest: (
-    signatureRequest: CreateSignatureRequestOptions
-  ) => void;
-  onSignatureRequestCreated: (signatureRequest: SignatureRequest) => void;
-  onAddFile: (signatureRequestId: string, options: AddFileOptions) => void;
-  onFileAdded: (signatureRequestId: string, file: AddedFile) => void;
-  onAddSigner: (signatureRequestId: string, options: AddSignerOptions) => void;
-  onSignerAdded: (
-    signatureRequestId: string,
-    signer: AddSignerResponse
-  ) => void;
-  onGetDocument: (signatureRequestId: string, documentId: string) => void;
-  onDocumentRetrieved: (document: Blob) => void;
-  onGetRequests: (query: Partial<SignatureRequestQuery>) => void;
-  onRequestsRetrieved: (requests: SignatureRequestQueryResult) => void;
-  onGetCertificate: (certificateRequestId: string, signerId?: string) => void;
-  onGetCertificateRetrieved: (certificate: Blob) => void;
-  onGetCertificateData: (
-    certificateRequestId: string,
-    signerId: string
-  ) => void;
-  onCertificateDataRetrieved: (certificateData: CertificateData) => void;
-  onError: (error: Error) => void;
-};
-
+//Typegen for Hooks
 type CapitalizeFirstLetter<S extends string> =
   S extends `${infer First}${infer Rest}` ? `${Uppercase<First>}${Rest}` : S;
 
