@@ -489,7 +489,11 @@ export type MethodToAfterEvent<T extends object> = {
   ) => void;
 };
 
-export type Events<T extends object> = MethodToBeginEvent<T> &
+export type Hooks<T extends object> = MethodToBeginEvent<T> &
   MethodToAfterEvent<T> & {
     onError: (error?: Error) => void;
   };
+
+export type ClientOptions = {
+  environment: "sandbox" | "production";
+};

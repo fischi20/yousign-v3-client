@@ -1,5 +1,6 @@
 import { $fetch, type $Fetch } from "ofetch";
 export * from "./types";
+export * from "./decorators";
 
 import type {
   SignatureRequest,
@@ -12,34 +13,49 @@ import type {
   SignatureRequestQueryResult,
   SignatureRequestQuery,
   CertificateData,
-  Events,
+  Hooks,
+  ClientOptions,
 } from "./types";
 
-import { GenHooks, noHook } from "./decorators";
+import { GenHooks } from "./decorators";
 
 import { createHooks } from "hookable";
+
+function riseError(...args: Parameters<ErrorConstructor>): never {
+  throw new Error(...args);
+}
 
 //TODO Client and hookable Client are separate classes for typesafety and autoimplementation of hooks
 
 //TODO add hooks to extend functionality (e.g. hooks, prepare data before sending it if needed etc)
 
-export class Client {
-  protected fetch: $Fetch;
+export class BaseClient {
+  readonly fetch: $Fetch;
 
   /**
    * Create a new YouSign adapter instance
    * @param apiKey YouSign API key
    */
-  constructor(apiKey: string) {
+  constructor(apiKey: string, options?: ClientOptions) {
     if (!apiKey) {
       throw new Error("YouSign API key is required and not provided");
     }
-    this.fetch = $fetch.create({
-      baseURL: "https://api-sandbox.yousign.app/v3",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-      },
-    });
+
+    if (options) {
+      const baseURL =
+        options.environment === "sandbox"
+          ? "https://api-sandbox.yousign.app/v3"
+          : options.environment === "production"
+          ? "https://api.yousign.app/v3"
+          : riseError(`Invalid environment: ${options.environment}`);
+
+      this.fetch = $fetch.create({
+        baseURL,
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+        },
+      });
+    }
   }
 
   /**
@@ -226,6 +242,10 @@ export class Client {
 
 /**
  * YouSign adapter for the V3 REST API
+ * @param token YouSign API key
+ * @param options Options for the client
+ * @default options.environment = 'sandbox'
+ *
  * @example ```js
  *  import { YouSignClient } from 'yousign-v3-client';
  *
@@ -265,14 +285,23 @@ export class Client {
  * ```
  */
 @GenHooks
-export class YouSignClient extends Client {
-  readonly hooks = createHooks<Events<Client>>();
+export class YouSignClient extends BaseClient {
+  readonly hooks = createHooks<Hooks<BaseClient>>();
 
-  constructor(token: string) {
-    super(token);
-
+  constructor(
+    token: string,
+    options: ClientOptions = { environment: "sandbox" }
+  ) {
+    super(token, options);
+    const baseURL =
+      options.environment === "sandbox"
+        ? "https://api-sandbox.yousign.app/v3"
+        : options.environment === "production"
+        ? "https://api.yousign.app/v3"
+        : riseError(`Invalid environment: ${options.environment}`);
+    //@ts-ignore
     this.fetch = $fetch.create({
-      baseURL: "https://api-sandbox.yousign.app/v3",
+      baseURL,
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -285,5 +314,3 @@ export class YouSignClient extends Client {
     });
   }
 }
-
-const client = new YouSignClient("abc");

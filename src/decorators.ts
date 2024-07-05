@@ -2,7 +2,7 @@ function capitalizeFirst(input: string) {
   return input.charAt(0).toUpperCase() + input.slice(1);
 }
 
-export function noHook(target: any, context: ClassMethodDecoratorContext<any>) {
+export function NoHook(target: any, context: ClassMethodDecoratorContext<any>) {
   if (!target.constructor.prototype.__skipLog__) {
     target.constructor.prototype.__skipLog__ = [];
   }
