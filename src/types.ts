@@ -68,10 +68,23 @@ type SignatureDeclineInfo = {
 
 type AuditTrailLocale = "de" | "en" | "es" | "fr" | "it";
 
-type EmailNotificationSender = {
-  type: "organization" | "workspace" | "custom";
-  custom_name: Nullable<string>;
+type CustomEmailNotificationSender = {
+  type: "custom";
+  custom_name: string;
 };
+
+type OrganizationEmailNotificationSender = {
+  type: "organization";
+};
+
+type WorkspaceEmailNotificationSender = {
+  type: "workspace";
+};
+
+export type EmailNotificationSender =
+  | CustomEmailNotificationSender
+  | OrganizationEmailNotificationSender
+  | WorkspaceEmailNotificationSender;
 
 export type CreateSignatureRequestOptions = {
   name: string;
@@ -87,7 +100,7 @@ export type CreateSignatureRequestOptions = {
   /** @default false */
   signers_allowed_to_decline?: boolean;
   email_notification?: Nullable<{
-    sender: Nullable<Partial<EmailNotificationSender>>;
+    sender: Nullable<EmailNotificationSender>;
     /** Max length 500 characters */
     custom_note?: Nullable<string>;
   }>;
@@ -131,8 +144,19 @@ export type SignatureRequest = {
   branding_id: Nullable<string>;
 };
 
+type URLFile =
+  | string
+  | {
+      type: "url";
+      url: string;
+      encoding?: string;
+      headers?: Record<string, string>;
+      mimeType?: string;
+      fileName?: string;
+    };
+
 export type AddFileOptions = {
-  file: File;
+  file: File | Blob | URLFile;
   nature: "attachment" | "signable_document";
   insert_after_id?: string;
   password?: string;

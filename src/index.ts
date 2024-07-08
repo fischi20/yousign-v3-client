@@ -46,8 +46,8 @@ export class BaseClient {
         options.environment === "sandbox"
           ? "https://api-sandbox.yousign.app/v3"
           : options.environment === "production"
-          ? "https://api.yousign.app/v3"
-          : riseError(`Invalid environment: ${options.environment}`);
+            ? "https://api.yousign.app/v3"
+            : riseError(`Invalid environment: ${options.environment}`);
 
       this.fetch = $fetch.create({
         baseURL,
@@ -66,7 +66,7 @@ export class BaseClient {
    * @returns the signature request or an error
    */
   async createSignatureRequest(
-    options: CreateSignatureRequestOptions
+    options: CreateSignatureRequestOptions,
   ): Promise<SignatureRequest> {
     //TODO expand with all the options
     const response = await this.fetch<SignatureRequest>("/signature_requests", {
@@ -85,9 +85,34 @@ export class BaseClient {
    */
   async addDocument(
     signatureRequestId: string,
-    options: AddFileOptions
+    options: AddFileOptions,
   ): Promise<AddedFile> {
-    const { file, ...rest } = options;
+    let { file, ...rest } = options;
+    if (!(file instanceof File) && !(file instanceof Blob)) {
+      if (typeof file === "string") {
+        const blob = await $fetch(file, {
+          responseType: "blob",
+        });
+
+        const fileName = file.split("/").pop();
+
+        file = new File([blob], fileName);
+
+        console.log("Loaded file: ", file);
+      } else {
+        const content = await $fetch(file.url, {
+          responseType: "arrayBuffer",
+          headers: file.headers,
+        });
+
+        const decoder = new TextDecoder(file.encoding);
+        const body = decoder.decode(content);
+
+        //read the content and decode it using the encoding prop
+        file = new Blob([body], { type: file.mimeType });
+        console.log("Loaded file from base64?: ", file);
+      }
+    }
     const formData = new FormData();
     formData.append("file", file);
     formData.append("nature", rest.nature);
@@ -106,7 +131,7 @@ export class BaseClient {
       {
         method: "POST",
         body: formData,
-      }
+      },
     );
 
     return response;
@@ -125,7 +150,7 @@ export class BaseClient {
       {
         method: "POST",
         body: options,
-      }
+      },
     );
 
     return response;
@@ -142,7 +167,7 @@ export class BaseClient {
       {
         method: "POST",
         ignoreResponseError: true,
-      }
+      },
     );
     return response;
   }
@@ -157,7 +182,7 @@ export class BaseClient {
       "/signature_requests",
       {
         query,
-      }
+      },
     );
     return response;
   }
@@ -173,7 +198,7 @@ export class BaseClient {
       `/signature_requests/${signatureRequestId}/documents/${documentId}/download`,
       {
         responseType: "blob",
-      }
+      },
     );
     return response;
   }
@@ -186,7 +211,7 @@ export class BaseClient {
    */
   async getCertificateData(signatureRequestId: string, signerId: string) {
     const response = await this.fetch<CertificateData>(
-      `/signature_requests/${signatureRequestId}/signers/${signerId}/audit_trails`
+      `/signature_requests/${signatureRequestId}/signers/${signerId}/audit_trails`,
     );
     return response;
   }
@@ -198,7 +223,7 @@ export class BaseClient {
    */
   async getCertificate(
     signatureRequestId: string,
-    signerId: string
+    signerId: string,
   ): Promise<Blob>;
   /**
    * Gets the certificate for each signer of the signature request
@@ -207,32 +232,32 @@ export class BaseClient {
    */
   async getCertificate(
     signatureRequestId: string,
-    mergeDocuments?: boolean
+    mergeDocuments?: boolean,
   ): Promise<Blob>;
   async getCertificate(
     signatureRequestId: string,
-    signerId: string | boolean = true
+    signerId: string | boolean = true,
   ): Promise<Blob> {
     switch (typeof signerId) {
       case "string": {
         const response = await this.fetch(
           `/signature_requests/${signatureRequestId}/signers/${signerId}/audit_trails/download`,
-          { responseType: "blob" }
+          { responseType: "blob" },
         );
         return response;
       }
       case "boolean": {
         const response = await this.fetch(
           `/signature_requests/${signatureRequestId}/audit_trails/download`,
-          { responseType: "blob" }
+          { responseType: "blob" },
         );
         return response;
       }
       default: {
         const error = new Error(
           `Invalid signerId type: ${typeof signerId}: ${JSON.stringify(
-            signerId
-          )}`
+            signerId,
+          )}`,
         );
         throw error;
       }
@@ -290,15 +315,15 @@ export class YouSignClient extends BaseClient {
 
   constructor(
     token: string,
-    options: ClientOptions = { environment: "sandbox" }
+    options: ClientOptions = { environment: "sandbox" },
   ) {
     super(token, options);
     const baseURL =
       options.environment === "sandbox"
         ? "https://api-sandbox.yousign.app/v3"
         : options.environment === "production"
-        ? "https://api.yousign.app/v3"
-        : riseError(`Invalid environment: ${options.environment}`);
+          ? "https://api.yousign.app/v3"
+          : riseError(`Invalid environment: ${options.environment}`);
     //@ts-ignore
     this.fetch = $fetch.create({
       baseURL,

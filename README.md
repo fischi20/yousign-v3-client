@@ -84,3 +84,17 @@ If you want to make a request to the API without using the hooks, you can use th
 everything set up to make a request to the API with the correct headers and baseUrl already set up.
 The only thing you would need to do is passing the correct body/query params to the fetch function and the path to the API.
 the fetch function is based on the [ofetch](https://unjs.io/packages/ofetch) library.
+
+
+## IFrame
+Yousign supports the usage of an iframe embeded to the website to sign the documents. This package reexports it as yousign-v3-client/iframe
+
+````ts
+import {Yousign} from "yousign-v3-client/iframe"
+
+const yousign = new Yousign({
+  signatureLink: 'signature_link',
+  iframeContainerId: 'iframe-container',
+  isSandbox: false,
+});
+```
