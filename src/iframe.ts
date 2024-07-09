@@ -211,8 +211,9 @@ export class Yousign {
         callback(data);
       }
     } else if (data.type === "__ubble" && data.payload?.redirectUrl) {
-      this.iframe.src = `${data.payload.redirectUrl
-        }&k=${this.urlParams.get("k")}`;
+      this.iframe.src = `${
+        data.payload.redirectUrl
+      }&k=${this.urlParams.get("k")}`;
     }
   }
 
@@ -298,7 +299,7 @@ yousign.onPing((data) => {
   console.log(data);
 });
 
-yousign.onDeclined((data)) => {
+yousign.onDeclined((data) => {
   console.log("Declined - The signer declined the signature");
   console.log(data);
-}
+});
