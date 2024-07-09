@@ -1,5 +1,5 @@
 {
-  "name": "@fischi20/yousign-v3-sdk",
+  "name": "@fischi20/yousign-v3-client",
   "version": "0.2.0",
   "exports": {
     ".": "./src/index.ts",
