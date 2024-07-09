@@ -1,7 +1,6 @@
-# yousign-adapter
+# yousign-v3-client
 
 ## Installation
-
 ```bash
 #npm
 npm install yousign-v3-client
@@ -14,7 +13,14 @@ pnpm add yousign-v3-client
 
 #bun
 bun add yousign-v3-client
+
+#deno
+deno add @fischi20/yousign-v3-client
 ```
+The package is also hosted on [JSR](https://jsr.io/@fischi20/yousign-v3-client@0.2.3). It's suggested to check it out even if it's just for the generated docs.
+
+## Runtimes
+This package only has 2 dependencies, hookable and ofetch, both should be runtime agnostic, making this package also compatible to every runtime
 
 ## Useful documentation
 
@@ -89,7 +95,7 @@ the fetch function is based on the [ofetch](https://unjs.io/packages/ofetch) lib
 ## IFrame
 Yousign supports the usage of an iframe embeded to the website to sign the documents. This package reexports it as yousign-v3-client/iframe
 
-````ts
+```ts
 import {Yousign} from "yousign-v3-client/iframe"
 
 const yousign = new Yousign({

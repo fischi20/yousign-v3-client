@@ -5,7 +5,7 @@
  *
  * @example
  * ```ts
- * const yousign = new Yousign({
+ *const yousign = new Yousign({
  *  signatureLink: "signature_link",
  *  iframeContainerId: "iframe-container",
  *  isSandbox: false,

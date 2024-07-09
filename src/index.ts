@@ -5,7 +5,7 @@
  *
  * @example
  * ```ts
- *  import { YouSignClient } from 'yousign-v3-client';
+ * import { YouSignClient } from 'yousign-v3-client';
  *
  * const yousign = new YouSignClient(process.env.YOUSIGN_API_KEY);
  *
@@ -366,7 +366,7 @@ export class BaseClient {
  * @default options.environment = 'sandbox'
  *
  * @example ```js
- *  import { YouSignClient } from 'yousign-v3-client';
+ * import { YouSignClient } from 'yousign-v3-client';
  *
  * const yousign = new YouSignClient(process.env.YOUSIGN_API_KEY);
  *
