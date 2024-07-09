@@ -518,7 +518,7 @@ type MethodsOf<T> = {
 };
 
 export type MethodToBeginEvent<T extends object> = {
-  [K in keyof MethodsOf<T> as `onBegin${CapitalizeFirstLetter<K>}`]: (
+  [K in keyof MethodsOf<T> as `onBefore${CapitalizeFirstLetter<K>}`]: (
     //@ts-expect-error
     ...args: Parameters<T[K]>
   ) => void;

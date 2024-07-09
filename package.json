@@ -1,6 +1,6 @@
 {
   "name": "yousign-v3-client",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "TS Adapter for the YouSign V3 API",
   "scripts": {
     "build": "unbuild",

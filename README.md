@@ -72,8 +72,8 @@ For node esm and cjs are supported.
 
 Should be pretty self explanatory, but the hooks are overall structured as follows:
 
-- When an action is called, a hook is called with the arguments. The hook name starts with `onBeginActionName`
-- When an action is completed, a hook is called with the response data from the API. The hook name starts with `onAFterActionName`
+- When an action is called, a hook is called with the arguments. The hook name starts with `onBeforeActionName`
+- When an action is completed, a hook is called with the response data from the API. The hook name starts with `onAfterActionName`
 - There is a general hook called `onError` which is called when an error occurs in any step of the process.
 
 Hooks are implemented using the [hookable](https://unjs.io/packages/hookable) library.

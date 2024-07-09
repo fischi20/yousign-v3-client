@@ -75,6 +75,11 @@ function riseError(...args: Parameters<ErrorConstructor>): never {
 
 //TODO add hooks to extend functionality (e.g. hooks, prepare data before sending it if needed etc)
 
+/**
+ * BaseClient the YouSignClient is based off, this client includes only the base bindings
+ * without any hooks or default config. This class should be used if you want to extend
+ * the functionality of the client for your own project
+ */
 export class BaseClient {
   readonly fetch: $Fetch;
 
@@ -82,26 +87,24 @@ export class BaseClient {
    * Create a new YouSign adapter instance
    * @param apiKey YouSign API key
    */
-  constructor(apiKey: string, options?: ClientOptions) {
+  constructor(apiKey: string, options: ClientOptions) {
     if (!apiKey) {
       throw new Error("YouSign API key is required and not provided");
     }
 
-    if (options) {
-      const baseURL =
-        options.environment === "sandbox"
-          ? "https://api-sandbox.yousign.app/v3"
-          : options.environment === "production"
-            ? "https://api.yousign.app/v3"
-            : riseError(`Invalid environment: ${options.environment}`);
+    const baseURL =
+      options.environment === "sandbox"
+        ? "https://api-sandbox.yousign.app/v3"
+        : options.environment === "production"
+          ? "https://api.yousign.app/v3"
+          : riseError(`Invalid environment: ${options.environment}`);
 
-      this.fetch = $fetch.create({
-        baseURL,
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-        },
-      });
-    }
+    this.fetch = $fetch.create({
+      baseURL,
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+      },
+    });
   }
 
   /**
