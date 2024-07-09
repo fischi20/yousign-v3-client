@@ -5,41 +5,38 @@
  *
  * @example
  * ```ts
- *  import { YouSignClient } from 'yousign-v3-client';
+ * const yousign = new Yousign({
+ *  signatureLink: "signature_link",
+ *  iframeContainerId: "iframe-container",
+ *  isSandbox: false,
+ *  classes: ["h-full", "w-full"],
+ *});
  *
- * const yousign = new YouSignClient(process.env.YOUSIGN_API_KEY);
+ *yousign.onStarted((data) => {
+ *  console.log("Signer has opened the signature");
+ *  console.log(data);
+ *});
  *
- * //1. Create a signature request
- * const signatureRequest = await yousign.createSignatureRequest({ name: signatureName, delivery_mode: 'email' });
- * //2. Add the files to the signature request
- * await yousign.addDocument(signatureRequest.value!.id, {
- *  file,
- *  nature: "signable_document",
- *  parse_anchors: true,
- * })
- * //3.Add signers to the signature request
- * await yousign.addSigner(signatureRequest.value!.id, {
- *  signature_level: 'electronic_signature',
- *  info: {
- *    first_name,
- *    last_name,
- *    email
- *      phone_number,
- *      locale
- *    },
- *    signature_authentication_mode: 'otp_sms',
- *    fields: [
- *      {
- *        type: 'signature',
- *        document_id: file.id,
- *        page: 1,
- *        x: 0,
- *        y: 0
- *      }
- *    ]
- *  })
- * //4. Activate signature request
- * await yousign.activateSignature(signatureRequest.id);
+ *yousign.onSuccess((data) => {
+ *  console.log("Signer has successfully signed");
+ *  console.log(data);
+ *});
+ *
+ *yousign.onError((data) => {
+ *  console.log("Signer encountered an error when signing");
+ *  console.log(data);
+ *});
+ *
+ *yousign.onPing((data) => {
+ *  console.log("Ping - The signature request is loaded");
+ *  console.log(data);
+ *});
+ *
+ *yousign.onDeclined((data) => {
+ *  console.log("Declined - The signer declined the signature");
+ *  console.log(data);
+ *});
+ *
  * ```
  */
 
@@ -184,6 +181,37 @@ type EventCallback<T extends YousignEvent["event"] = any> = (
 /**
  * For security reasons, iFrame is available only in production on whitelisted domains. To add your domains, please get in touch with our support.
  * @example ````ts
+ const yousign = new Yousign({
+   signatureLink: "signature_link",
+   iframeContainerId: "iframe-container",
+   isSandbox: false,
+   classes: ["h-full", "w-full"],
+ });
+
+ yousign.onStarted((data) => {
+   console.log("Signer has opened the signature");
+   console.log(data);
+ });
+
+ yousign.onSuccess((data) => {
+   console.log("Signer has successfully signed");
+   console.log(data);
+ });
+
+ yousign.onError((data) => {
+   console.log("Signer encountered an error when signing");
+   console.log(data);
+ });
+
+ yousign.onPing((data) => {
+   console.log("Ping - The signature request is loaded");
+   console.log(data);
+ });
+
+ yousign.onDeclined((data) => {
+   console.log("Declined - The signer declined the signature");
+   console.log(data);
+ });
 
  ```
  */
@@ -316,35 +344,3 @@ export class Yousign {
     window.removeEventListener("message", this.messageHandler);
   }
 }
-
-const yousign = new Yousign({
-  signatureLink: "signature_link",
-  iframeContainerId: "iframe-container",
-  isSandbox: false,
-  classes: ["h-full", "w-full"],
-});
-
-yousign.onStarted((data) => {
-  console.log("Signer has opened the signature");
-  console.log(data);
-});
-
-yousign.onSuccess((data) => {
-  console.log("Signer has successfully signed");
-  console.log(data);
-});
-
-yousign.onError((data) => {
-  console.log("Signer encountered an error when signing");
-  console.log(data);
-});
-
-yousign.onPing((data) => {
-  console.log("Ping - The signature request is loaded");
-  console.log(data);
-});
-
-yousign.onDeclined((data) => {
-  console.log("Declined - The signer declined the signature");
-  console.log(data);
-});
