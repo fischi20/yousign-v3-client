@@ -1,3 +1,48 @@
+/**
+ * @module
+ *
+ * Bindings to the Youfetch V3 api
+ *
+ * @example
+ * ```ts
+ *  import { YouSignClient } from 'yousign-v3-client';
+ *
+ * const yousign = new YouSignClient(process.env.YOUSIGN_API_KEY);
+ *
+ * //1. Create a signature request
+ * const signatureRequest = await yousign.createSignatureRequest({ name: signatureName, delivery_mode: 'email' });
+ * //2. Add the files to the signature request
+ * await yousign.addDocument(signatureRequest.value!.id, {
+ *  file,
+ *  nature: "signable_document",
+ *  parse_anchors: true,
+ * })
+ * //3.Add signers to the signature request
+ * await yousign.addSigner(signatureRequest.value!.id, {
+ *  signature_level: 'electronic_signature',
+ *  info: {
+ *    first_name,
+ *    last_name,
+ *    email
+ *      phone_number,
+ *      locale
+ *    },
+ *    signature_authentication_mode: 'otp_sms',
+ *    fields: [
+ *      {
+ *        type: 'signature',
+ *        document_id: file.id,
+ *        page: 1,
+ *        x: 0,
+ *        y: 0
+ *      }
+ *    ]
+ *  })
+ * //4. Activate signature request
+ * await yousign.activateSignature(signatureRequest.id);
+ * ```
+ */
+
 import { $fetch, type $Fetch } from "ofetch";
 export * from "./decorators";
 export * from "./types";
