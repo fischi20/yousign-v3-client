@@ -1,25 +1,26 @@
 import { $fetch, type $Fetch } from "ofetch";
-export * from "./types";
 export * from "./decorators";
+export * from "./types";
 
 import type {
-  SignatureRequest,
-  CreateSignatureRequestOptions,
-  AddFileOptions,
   AddedFile,
+  AddFileOptions,
   AddSignerOptions,
   AddSignerResponse,
-  SignatureRequestActivateResponse,
-  SignatureRequestQueryResult,
-  SignatureRequestQuery,
   CertificateData,
-  Hooks,
   ClientOptions,
+  CreateSignatureRequestOptions,
+  DocumentInfo,
+  Hooks,
+  SignatureRequest,
+  SignatureRequestActivateResponse,
+  SignatureRequestQuery,
+  SignatureRequestQueryResult,
 } from "./types";
 
 import { GenHooks } from "./decorators";
 
-import { createHooks } from "hookable";
+import { createHooks, Hookable, HookKeys } from "hookable";
 
 function riseError(...args: Parameters<ErrorConstructor>): never {
   throw new Error(...args);
@@ -144,7 +145,10 @@ export class BaseClient {
    * @param options
    * @returns
    */
-  async addSigner(signatureRequestId: string, options: AddSignerOptions) {
+  async addSigner(
+    signatureRequestId: string,
+    options: AddSignerOptions,
+  ): Promise<AddSignerResponse> {
     const response = await this.fetch<AddSignerResponse>(
       `/signature_requests/${signatureRequestId}/signers`,
       {
@@ -161,7 +165,9 @@ export class BaseClient {
    * @param signatureRequestId
    * @returns
    */
-  async activateSignatureRequest(signatureRequestId: string) {
+  async activateSignatureRequest(
+    signatureRequestId: string,
+  ): Promise<SignatureRequestActivateResponse> {
     const response = await this.fetch<SignatureRequestActivateResponse>(
       `/signature_requests/${signatureRequestId}/activate`,
       {
@@ -177,7 +183,9 @@ export class BaseClient {
    * @param query
    * @returns
    */
-  async getRequests(query: Partial<SignatureRequestQuery> = {}) {
+  async getRequests(
+    query: Partial<SignatureRequestQuery> = {},
+  ): Promise<SignatureRequestQueryResult> {
     const response = await this.fetch<SignatureRequestQueryResult>(
       "/signature_requests",
       {
@@ -193,7 +201,10 @@ export class BaseClient {
    * @param documentId
    * @returns
    */
-  async getDocument(signatureRequestId: string, documentId: string) {
+  async getDocument(
+    signatureRequestId: string,
+    documentId: string,
+  ): Promise<Blob> {
     const response = await this.fetch(
       `/signature_requests/${signatureRequestId}/documents/${documentId}/download`,
       {
@@ -204,12 +215,47 @@ export class BaseClient {
   }
 
   /**
+   * Get all the metadata stored about the file belonging to the signature request
+   * @param signatureRequestId
+   * @param documentId
+   * @returns
+   */
+  async getDocumentData(
+    signatureRequestId: string,
+    documentId: string,
+  ): Promise<DocumentInfo> {
+    const response = await this.fetch<DocumentInfo>(
+      `/signature_requests/${signatureRequestId}/documents/${documentId}`,
+    );
+
+    return response;
+  }
+
+  /**
+   * Get all the metadata of all the files relevant for the signature request
+   * @param signatureRequestId
+   * @returns
+   */
+  async getSignatureDocumentsData(
+    signatureRequestId: string,
+  ): Promise<DocumentInfo[]> {
+    const response = await this.fetch<DocumentInfo[]>(
+      `/signature_requests/${signatureRequestId}/documents`,
+    );
+
+    return response;
+  }
+
+  /**
    * Gets the certificate data, useful to display it online, or to generate a certificate from it if needed
    * @param signatureRequestId
    * @param signerId
    * @returns
    */
-  async getCertificateData(signatureRequestId: string, signerId: string) {
+  async getCertificateData(
+    signatureRequestId: string,
+    signerId: string,
+  ): Promise<CertificateData> {
     const response = await this.fetch<CertificateData>(
       `/signature_requests/${signatureRequestId}/signers/${signerId}/audit_trails`,
     );
@@ -311,7 +357,8 @@ export class BaseClient {
  */
 @GenHooks
 export class YouSignClient extends BaseClient {
-  readonly hooks = createHooks<Hooks<BaseClient>>();
+  readonly hooks: Hookable<Hooks<BaseClient>, HookKeys<Hooks<BaseClient>>> =
+    createHooks<Hooks<BaseClient>>();
 
   constructor(
     token: string,

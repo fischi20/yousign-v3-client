@@ -491,6 +491,24 @@ export type CertificateData = {
   };
 };
 
+export type DocumentInfo = {
+  id: string;
+  filename: string;
+  nature: "attachment" | "signable_document";
+  content_type: string;
+  sha256: string;
+  is_protected: boolean;
+  is_signed: boolean;
+  created_at: string;
+  total_pages: number;
+  is_locked: boolean;
+  initials: {
+    alignment: "left" | "center" | "right";
+    y: number;
+  };
+  total_anchors: number;
+};
+
 //Typegen for Hooks
 type CapitalizeFirstLetter<S extends string> =
   S extends `${infer First}${infer Rest}` ? `${Uppercase<First>}${Rest}` : S;
@@ -509,7 +527,7 @@ export type MethodToBeginEvent<T extends object> = {
 export type MethodToAfterEvent<T extends object> = {
   [K in keyof MethodsOf<T> as `onAfter${CapitalizeFirstLetter<K>}`]: (
     //@ts-expect-error
-    data: Awaited<ReturnType<T[K]>>
+    data: Awaited<ReturnType<T[K]>>,
   ) => void;
 };
 
