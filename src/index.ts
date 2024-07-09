@@ -48,7 +48,7 @@ export * from "./decorators";
 export * from "./types";
 
 import type {
-  AddedFile,
+  AddFileResponse,
   AddFileOptions,
   AddSignerOptions,
   AddSignerResponse,
@@ -135,7 +135,7 @@ export class BaseClient {
   async addDocument(
     signatureRequestId: string,
     options: AddFileOptions,
-  ): Promise<AddedFile> {
+  ): Promise<AddFileResponse> {
     let { file, ...rest } = options;
     if (!(file instanceof File) && !(file instanceof Blob)) {
       if (typeof file === "string") {
@@ -175,7 +175,7 @@ export class BaseClient {
     rest.parse_anchors &&
       formData.append("parse_anchors", rest.parse_anchors.toString());
 
-    const response = await this.fetch<AddedFile>(
+    const response = await this.fetch<AddFileResponse>(
       `/signature_requests/${signatureRequestId}/documents`,
       {
         method: "POST",

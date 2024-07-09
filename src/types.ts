@@ -1,5 +1,9 @@
+import { timezones } from "./timezones";
+
+/** Generic way to make types nullable */
 export type Nullable<T> = T | null;
 
+/** Possible statuses for a signature request */
 export type SignatureRequestStatus =
   | "draft"
   | "ongoing"
@@ -11,26 +15,34 @@ export type SignatureRequestStatus =
   | "rejected"
   | "declined";
 
+/** Level of the signature, more info in the {@link https://developers.yousign.com/docs/choose-my-signature-level|docs} */
 export type SignatureLevel =
   | "electronic_signature"
   | "advanced_electronic_signature"
   | "electronic_signature_with_qualified_certificate"
   | "qualified_electronic_signature"
   | "qualified_electronic_signature_mode_1";
-export type SignatureTimezone = string; //TODO type more strictly
+
+/** All the possible timezones following the {@link https://en.wikipedia.org/wiki/List_of_tz_database_time_zones|tz database format}*/
+export type SignatureTimezone = (typeof timezones)[number]; //TODO type more strictly
 
 /**
- * Delivery mode for the signature request
+ * Delivery mode for the
  * @value none: You are on your own
  * @value email: signer will reveive an email to sign the document
  */
 export type DeliveryMode = "none" | "email";
 
+/**
+ *Settings on how often relevant users for a signature request shall be reminded
+ *and the interval between the reminders
+ */
 export type ReminderSettings = {
   interval_in_days: 1 | 2 | 7 | 14;
   max_occurrences: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10;
 };
 
+/** Short hand signer and status data of a signature request */
 export type SignerInner = {
   id: string;
   status:
@@ -45,11 +57,13 @@ export type SignerInner = {
     | "error";
 };
 
+/** Status of the Approver related to a signature request*/
 export type ApproverInner = {
   id: string;
   status: "initiated" | "notified" | "approved" | "rejected";
 };
 
+/** Shorthand document info when used in overall Request info etc */
 export type DocumentInner = {
   id: string;
   nature: "attachment" | "signable_document";
@@ -81,11 +95,13 @@ type WorkspaceEmailNotificationSender = {
   type: "workspace";
 };
 
+/** Sets the field on the sender for the emails (seen in certificates) */
 export type EmailNotificationSender =
   | CustomEmailNotificationSender
   | OrganizationEmailNotificationSender
   | WorkspaceEmailNotificationSender;
 
+/** Settings that need to be passed when creating a new signature request */
 export type CreateSignatureRequestOptions = {
   name: string;
   delivery_mode: DeliveryMode;
@@ -106,6 +122,7 @@ export type CreateSignatureRequestOptions = {
   }>;
 };
 
+/** Info about a created signature */
 export type SignatureRequest = {
   id: string;
   status: SignatureRequestStatus;
@@ -155,6 +172,7 @@ type URLFile =
       fileName?: string;
     };
 
+/** settings that need to be passed when adding a file to a signature request*/
 export type AddFileOptions = {
   file: File | Blob | URLFile;
   nature: "attachment" | "signable_document";
@@ -164,7 +182,8 @@ export type AddFileOptions = {
   parse_anchors?: boolean;
 };
 
-export type AddedFile = {
+/** Response when a file got added to a signature request */
+export type AddFileResponse = {
   id: string;
   filename: string;
   nature: DocumentInner["nature"];
@@ -182,6 +201,7 @@ export type AddedFile = {
   total_anchors: number;
 };
 
+/** signature options that define where and on which document the siganture should be positioned */
 export type Signature = {
   document_id: string;
   type: "signature";
@@ -194,6 +214,7 @@ export type Signature = {
   width?: number;
 };
 
+/** Mention options */
 export type Mention = {
   document_id: string;
   type: "mention";
@@ -206,6 +227,7 @@ export type Mention = {
   mention: string;
 };
 
+/** Text input options */
 export type Text = {
   document_id: string;
   type: "text";
@@ -220,6 +242,7 @@ export type Text = {
   optional: boolean;
 };
 
+/** Checkbox Input options */
 export type Checkbox = {
   document_id: string;
   type: "checkbox";
@@ -233,6 +256,7 @@ export type Checkbox = {
   checked: boolean;
 };
 
+/** Radio group input options */
 export type RadioGroup = {
   document_id: string;
   type: "radio_group";
@@ -248,9 +272,11 @@ export type RadioGroup = {
   }[];
 };
 
+/** Options for all the possible anchors/inputs for a document when signing */
 export type FieldInput = Signature | Mention | Text | Checkbox | RadioGroup;
-
+/** Supported locales for signers */
 export type SignerLocale = "en" | "fr" | "de" | "it" | "nl" | "es" | "pl";
+/** Information about who signed */
 export type SignerInfo = {
   first_name: string;
   last_name: string;
@@ -258,13 +284,18 @@ export type SignerInfo = {
   phone_number: Nullable<string>;
   locale: SignerLocale;
 };
+
+/** Method with which the signature shoulld be authenticated */
 export type SignatureAuthMode = "otp_email" | "otp_sms" | "no_otp";
+
+/** Redirect URLS in case of the different outcomes, more info on the {@link https://developers.yousign.com/docs/redirect-a-signer-at-the-end-of-the-signing-flow|docs} */
 export type RedirectUrls = {
   success: Nullable<string>;
   error: Nullable<string>;
   declined: Nullable<string>;
 };
 
+/** Custom text options to for reminders and requests */
 export type CustomText = {
   request_subject: Nullable<string>;
   request_body: Nullable<string>;
@@ -272,7 +303,7 @@ export type CustomText = {
   reminder_body: Nullable<string>;
 };
 
-export type AddSignerScratchOptions = {
+type AddSignerScratchOptions = {
   info: SignerInfo;
   fields?: FieldInput[];
   insert_after_id?: Nullable<string>;
@@ -285,8 +316,10 @@ export type AddSignerScratchOptions = {
 };
 
 //TODO add contacts and user options too
+/** Settings that need to get passed when adding a Signer to a signature request */
 export type AddSignerOptions = AddSignerScratchOptions;
 
+/** Font options for fields */
 export type Font = {
   family:
     | "Inconsolata"
@@ -305,33 +338,39 @@ export type Font = {
   };
 };
 
+/** Signed signature value */
 export type SignerSignature = Required<Signature> & {
   id: string;
   signature_id: string;
 };
 
+/** Signed text value */
 export type SignerText = Required<Text> & {
   id: string;
   signer_id: string;
   font: Font;
 };
 
+/** Signed Mention value */
 export type SignerMention = Required<Mention> & {
   id: string;
   signer_id: string;
   font: Font;
 };
 
+/** Signed Checkbox value */
 export type SignerCheckbox = Required<Checkbox> & {
   id: string;
   signer_id: string;
 };
 
+/** Signed Radio group value */
 export type SignerRadioGroup = Required<RadioGroup> & {
   id: string;
   signer_id: string;
 };
 
+/** Signed input values */
 export type SignerFieldInput =
   | SignerSignature
   | SignerText
@@ -339,6 +378,7 @@ export type SignerFieldInput =
   | SignerCheckbox
   | SignerRadioGroup;
 
+/** Response when a Signer got added to the SignatureRequest */
 export type AddSignerResponse = {
   id: string;
   info: SignerInfo;
@@ -365,6 +405,7 @@ export type AddSignerResponse = {
   identification_attestation_id: Nullable<string>;
 };
 
+/** Signature activation response, end of normal workflow */
 export type SignatureRequestActivateResponse = {
   id: string;
   status: "ongoing" | "approval";
@@ -386,12 +427,14 @@ export type SignatureRequestActivateResponse = {
       | "signed"
       | "aborted"
       | "error";
+    /** @sensiblle */
     signature_link: Nullable<string>;
     signature_link_expiration_date: Nullable<string>;
   }[];
   approvers: {
     id: string;
     status: "initiated" | "notified" | "approved" | "rejected";
+    /** @sensible */
     approval_link: Nullable<string>;
     approval_link_expiration_date: Nullable<string>;
   }[];
@@ -402,13 +445,16 @@ export type SignatureRequestActivateResponse = {
   audit_trail_locale: AuditTrailLocale;
 };
 
+/** Result of the query for signature requests */
 export type SignatureRequestQueryResult = {
   meta: {
+    /** cursor to pass to the `after`fielld in the {@link SignatureRequestQuery} object */
     next_cursor: Nullable<string>;
   };
   data: SignatureRequest[];
 };
 
+/** Query object to search for signature requests */
 export type SignatureRequestQuery = {
   /**
    * @default 100
@@ -429,6 +475,7 @@ export type SignatureRequestQuery = {
   q: string;
 };
 
+/** certificate sender info */
 export type SignedSender = {
   id: string;
   type: "User";
@@ -439,6 +486,7 @@ export type SignedSender = {
   phone_number: string;
 };
 
+/** Certificate signer info */
 export type SignedSigner = {
   id: string;
   last_name: string;
@@ -450,6 +498,7 @@ export type SignedSigner = {
   signature_process_completed_at: string;
 };
 
+/** Certificate signature info */
 export type SignedSignature = {
   hash: string;
   reason: string;
@@ -462,6 +511,7 @@ export type SignedSignature = {
   };
 };
 
+/** Certificate document info */
 export type SignedDocument = {
   id: string;
   name: string;
@@ -471,6 +521,7 @@ export type SignedDocument = {
   initial_storage_id: string;
 };
 
+/** Contents of the certificate of a fulfilled signature request */
 export type CertificateData = {
   version: number;
   signature_request: SignatureRequest;
@@ -491,6 +542,7 @@ export type CertificateData = {
   };
 };
 
+/** Metadata stored about a Document on YouSign */
 export type DocumentInfo = {
   id: string;
   filename: string;
@@ -517,13 +569,15 @@ type MethodsOf<T> = {
   [K in keyof T as T[K] extends (...args: any[]) => any ? K : never]: T[K];
 };
 
-export type MethodToBeginEvent<T extends object> = {
+/**Generates all the onBefore hook type for a givven class/object type */
+export type MethodToBeforeEvent<T extends object> = {
   [K in keyof MethodsOf<T> as `onBefore${CapitalizeFirstLetter<K>}`]: (
     //@ts-expect-error
     ...args: Parameters<T[K]>
   ) => void;
 };
 
+/** Generates the onAfter hook type for a givven class/object type */
 export type MethodToAfterEvent<T extends object> = {
   [K in keyof MethodsOf<T> as `onAfter${CapitalizeFirstLetter<K>}`]: (
     //@ts-expect-error
@@ -531,11 +585,13 @@ export type MethodToAfterEvent<T extends object> = {
   ) => void;
 };
 
-export type Hooks<T extends object> = MethodToBeginEvent<T> &
+/** Generates the types for all the generated Hooks from a class/object type for all the methods/functions in it*/
+export type Hooks<T extends object> = MethodToBeforeEvent<T> &
   MethodToAfterEvent<T> & {
     onError: (error?: Error) => void;
   };
 
+/** Options to be passed to the BaseClient or YouSignClient constructor */
 export type ClientOptions = {
   environment: "sandbox" | "production";
 };
