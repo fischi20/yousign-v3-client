@@ -105,7 +105,7 @@ export type EmailNotificationSender =
 export type CreateSignatureRequestOptions = {
   name: string;
   delivery_mode: DeliveryMode;
-  ordered_signer?: boolean;
+  ordered_signers?: boolean;
   timezone?: SignatureTimezone;
   expiration_date?: string;
   template_id?: string;
@@ -581,7 +581,7 @@ export type MethodToBeforeEvent<T extends object> = {
 export type MethodToAfterEvent<T extends object> = {
   [K in keyof MethodsOf<T> as `onAfter${CapitalizeFirstLetter<K>}`]: (
     //@ts-expect-error
-    data: Awaited<ReturnType<T[K]>>,
+    data: Awaited<ReturnType<T[K]>>
   ) => void;
 };
 
