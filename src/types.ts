@@ -161,6 +161,11 @@ export type SignatureRequest = {
   branding_id: Nullable<string>;
 };
 
+export type SignatureRequestMetadata = Record<
+  string,
+  string | number | boolean
+>;
+
 type URLFile =
   | string
   | {
@@ -581,7 +586,7 @@ export type MethodToBeforeEvent<T extends object> = {
 export type MethodToAfterEvent<T extends object> = {
   [K in keyof MethodsOf<T> as `onAfter${CapitalizeFirstLetter<K>}`]: (
     //@ts-expect-error
-    data: Awaited<ReturnType<T[K]>>
+    data: Awaited<ReturnType<T[K]>>,
   ) => void;
 };
 

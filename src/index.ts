@@ -61,6 +61,7 @@ import type {
   SignatureRequestActivateResponse,
   SignatureRequestQuery,
   SignatureRequestQueryResult,
+  SignatureRequestMetadata,
 } from "./types";
 
 import { GenHooks } from "./decorators";
@@ -122,6 +123,20 @@ export class BaseClient {
       method: "POST",
       body: options,
     });
+    return response;
+  }
+
+  async addSignatureRequestMetadata(
+    signatureRequestId: string,
+    metadata: SignatureRequestMetadata,
+  ): Promise<{ data: SignatureRequestMetadata }> {
+    const response = await this.fetch<{ data: SignatureRequestMetadata }>(
+      `/signature_requests/${signatureRequestId}/metadata`,
+      {
+        method: "POST",
+        body: metadata,
+      },
+    );
     return response;
   }
 
@@ -245,6 +260,18 @@ export class BaseClient {
       "/signature_requests",
       {
         query,
+      },
+    );
+    return response;
+  }
+
+  async getSignatureRequestMetadata(
+    signatureRequestId: string,
+  ): Promise<{ data: SignatureRequestMetadata }> {
+    const response = await this.fetch<{ data: SignatureRequestMetadata }>(
+      `/signature_requests/${signatureRequestId}/metadata`,
+      {
+        method: "GET",
       },
     );
     return response;
