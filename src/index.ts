@@ -165,15 +165,22 @@ export class BaseClient {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("nature", rest.nature);
-    rest.insert_after_id &&
+
+    if (rest.insert_after_id) {
       formData.append("insert_after_id", rest.insert_after_id);
+    }
 
-    rest.password && formData.append("password", rest.password);
+    if (rest.password) {
+      formData.append("password", rest.password);
+    }
 
-    rest.initials && formData.append("initials", JSON.stringify(rest.initials));
+    if (rest.initials) {
+      formData.append("initials", JSON.stringify(rest.initials));
+    }
 
-    rest.parse_anchors &&
+    if (rest.parse_anchors) {
       formData.append("parse_anchors", rest.parse_anchors.toString());
+    }
 
     const response = await this.fetch<AddFileResponse>(
       `/signature_requests/${signatureRequestId}/documents`,
