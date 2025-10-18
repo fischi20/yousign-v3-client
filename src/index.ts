@@ -62,6 +62,8 @@ import type {
   SignatureRequestQuery,
   SignatureRequestQueryResult,
   SignatureRequestMetadata,
+  SignerConsentRequest,
+  SignerConsentResponse,
 } from "./types";
 
 import { GenHooks } from "./decorators";
@@ -97,8 +99,8 @@ export class BaseClient {
       options.environment === "sandbox"
         ? "https://api-sandbox.yousign.app/v3"
         : options.environment === "production"
-          ? "https://api.yousign.app/v3"
-          : riseError(`Invalid environment: ${options.environment}`);
+        ? "https://api.yousign.app/v3"
+        : riseError(`Invalid environment: ${options.environment}`);
 
     this.fetch = $fetch.create({
       baseURL,
@@ -227,6 +229,31 @@ export class BaseClient {
       },
     );
 
+    return response;
+  }
+
+  async addSignerConsent(
+    signatureRequestId: string,
+    signerIds: string[],
+    documentId: string,
+    options: SignerConsentRequest,
+  ): Promise<SignerConsentResponse> {
+    const response = await this.fetch<SignerConsentResponse>(
+      `/signature_requests/${signatureRequestId}/consent_requests`,
+      {
+        method: "POST",
+        body: {
+          type: options.type,
+          settings: {
+            text: options.consent_text,
+          },
+          optional: options.optional ?? true,
+          signer_ids: signerIds,
+          document_id: documentId,
+          insert_after_id: options.insert_after_id,
+        },
+      },
+    );
     return response;
   }
 
@@ -451,8 +478,8 @@ export class YouSignClient extends BaseClient {
       options.environment === "sandbox"
         ? "https://api-sandbox.yousign.app/v3"
         : options.environment === "production"
-          ? "https://api.yousign.app/v3"
-          : riseError(`Invalid environment: ${options.environment}`);
+        ? "https://api.yousign.app/v3"
+        : riseError(`Invalid environment: ${options.environment}`);
     //@ts-ignore
     this.fetch = $fetch.create({
       baseURL,

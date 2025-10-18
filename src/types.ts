@@ -166,6 +166,25 @@ export type SignatureRequestMetadata = Record<
   string | number | boolean
 >;
 
+export type SignerConsentRequest = {
+  type: "checkbox" | "text_to_copy";
+  consent_text: string;
+  /** @default true */
+  optional?: boolean;
+  insert_after_id?: Nullable<string>;
+};
+
+export type SignerConsentResponse = {
+  id: string;
+  type: string;
+  settings: {
+    text: string;
+  };
+  optional: boolean;
+  signer_ids: string[];
+  document_id: string;
+};
+
 type URLFile =
   | string
   | {
