@@ -61,6 +61,9 @@ import type {
   SignatureRequestActivateResponse,
   SignatureRequestQuery,
   SignatureRequestQueryResult,
+  SignatureRequestMetadata,
+  SignerConsentRequest,
+  SignerConsentResponse,
 } from "./types";
 
 import { GenHooks } from "./decorators";
@@ -96,8 +99,8 @@ export class BaseClient {
       options.environment === "sandbox"
         ? "https://api-sandbox.yousign.app/v3"
         : options.environment === "production"
-          ? "https://api.yousign.app/v3"
-          : riseError(`Invalid environment: ${options.environment}`);
+        ? "https://api.yousign.app/v3"
+        : riseError(`Invalid environment: ${options.environment}`);
 
     this.fetch = $fetch.create({
       baseURL,
@@ -122,6 +125,20 @@ export class BaseClient {
       method: "POST",
       body: options,
     });
+    return response;
+  }
+
+  async addSignatureRequestMetadata(
+    signatureRequestId: string,
+    metadata: SignatureRequestMetadata,
+  ): Promise<{ data: SignatureRequestMetadata }> {
+    const response = await this.fetch<{ data: SignatureRequestMetadata }>(
+      `/signature_requests/${signatureRequestId}/metadata`,
+      {
+        method: "POST",
+        body: metadata,
+      },
+    );
     return response;
   }
 
@@ -165,15 +182,22 @@ export class BaseClient {
     const formData = new FormData();
     formData.append("file", file);
     formData.append("nature", rest.nature);
-    rest.insert_after_id &&
+
+    if (rest.insert_after_id) {
       formData.append("insert_after_id", rest.insert_after_id);
+    }
 
-    rest.password && formData.append("password", rest.password);
+    if (rest.password) {
+      formData.append("password", rest.password);
+    }
 
-    rest.initials && formData.append("initials", JSON.stringify(rest.initials));
+    if (rest.initials) {
+      formData.append("initials", JSON.stringify(rest.initials));
+    }
 
-    rest.parse_anchors &&
+    if (rest.parse_anchors) {
       formData.append("parse_anchors", rest.parse_anchors.toString());
+    }
 
     const response = await this.fetch<AddFileResponse>(
       `/signature_requests/${signatureRequestId}/documents`,
@@ -208,6 +232,31 @@ export class BaseClient {
     return response;
   }
 
+  async addSignerConsent(
+    signatureRequestId: string,
+    signerIds: string[],
+    documentId: string,
+    options: SignerConsentRequest,
+  ): Promise<SignerConsentResponse> {
+    const response = await this.fetch<SignerConsentResponse>(
+      `/signature_requests/${signatureRequestId}/consent_requests`,
+      {
+        method: "POST",
+        body: {
+          type: options.type,
+          settings: {
+            text: options.consent_text,
+          },
+          optional: options.optional ?? true,
+          signer_ids: signerIds,
+          document_id: documentId,
+          insert_after_id: options.insert_after_id,
+        },
+      },
+    );
+    return response;
+  }
+
   /**
    * Performs the signature request
    * @param signatureRequestId
@@ -238,6 +287,18 @@ export class BaseClient {
       "/signature_requests",
       {
         query,
+      },
+    );
+    return response;
+  }
+
+  async getSignatureRequestMetadata(
+    signatureRequestId: string,
+  ): Promise<{ data: SignatureRequestMetadata }> {
+    const response = await this.fetch<{ data: SignatureRequestMetadata }>(
+      `/signature_requests/${signatureRequestId}/metadata`,
+      {
+        method: "GET",
       },
     );
     return response;
@@ -417,8 +478,8 @@ export class YouSignClient extends BaseClient {
       options.environment === "sandbox"
         ? "https://api-sandbox.yousign.app/v3"
         : options.environment === "production"
-          ? "https://api.yousign.app/v3"
-          : riseError(`Invalid environment: ${options.environment}`);
+        ? "https://api.yousign.app/v3"
+        : riseError(`Invalid environment: ${options.environment}`);
     //@ts-ignore
     this.fetch = $fetch.create({
       baseURL,

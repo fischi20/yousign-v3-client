@@ -105,7 +105,7 @@ export type EmailNotificationSender =
 export type CreateSignatureRequestOptions = {
   name: string;
   delivery_mode: DeliveryMode;
-  ordered_signer?: boolean;
+  ordered_signers?: boolean;
   timezone?: SignatureTimezone;
   expiration_date?: string;
   template_id?: string;
@@ -159,6 +159,30 @@ export type SignatureRequest = {
   email_custom_note: Nullable<string>;
   /**@deprecated Should always be null and soon to be removed*/
   branding_id: Nullable<string>;
+};
+
+export type SignatureRequestMetadata = Record<
+  string,
+  string | number | boolean
+>;
+
+export type SignerConsentRequest = {
+  type: "checkbox" | "text_to_copy";
+  consent_text: string;
+  /** @default true */
+  optional?: boolean;
+  insert_after_id?: Nullable<string>;
+};
+
+export type SignerConsentResponse = {
+  id: string;
+  type: string;
+  settings: {
+    text: string;
+  };
+  optional: boolean;
+  signer_ids: string[];
+  document_id: string;
 };
 
 type URLFile =
