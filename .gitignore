@@ -8,3 +8,6 @@ types
 *.log*
 *.conf*
 *.env*
+
+playground
+bun.lock

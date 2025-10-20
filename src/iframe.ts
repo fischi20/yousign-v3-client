@@ -176,7 +176,6 @@ export type YousignEvent =
   | YousignDeclinedEvent
   | YousignPingEvent;
 
-//TODO extract this to a unique package called Variant
 type EventCallback<T extends YousignEvent["event"] = any> = (
   data: T extends YousignEvent["event"]
     ? Extract<YousignEvent, { event: T }>

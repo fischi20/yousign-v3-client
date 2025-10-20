@@ -24,7 +24,7 @@ export type SignatureLevel =
   | "qualified_electronic_signature_mode_1";
 
 /** All the possible timezones following the {@link https://en.wikipedia.org/wiki/List_of_tz_database_time_zones|tz database format}*/
-export type SignatureTimezone = (typeof timezones)[number]; //TODO type more strictly
+export type SignatureTimezone = (typeof timezones)[number];
 
 /**
  * Delivery mode for the
@@ -339,7 +339,6 @@ type AddSignerScratchOptions = {
   identification_attestation_id?: Nullable<string>;
 };
 
-//TODO add contacts and user options too
 /** Settings that need to get passed when adding a Signer to a signature request */
 export type AddSignerOptions = AddSignerScratchOptions;
 

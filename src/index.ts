@@ -46,6 +46,7 @@
 import { $fetch, type $Fetch } from "ofetch";
 export * from "./decorators";
 export * from "./types";
+export {SignatureRequestHandle} from "./handle"
 
 import type {
   AddFileResponse,
@@ -73,10 +74,6 @@ import { createHooks, Hookable, HookKeys } from "hookable";
 function riseError(...args: Parameters<ErrorConstructor>): never {
   throw new Error(...args);
 }
-
-//TODO Client and hookable Client are separate classes for typesafety and autoimplementation of hooks
-
-//TODO add hooks to extend functionality (e.g. hooks, prepare data before sending it if needed etc)
 
 /**
  * BaseClient the YouSignClient is based off, this client includes only the base bindings
@@ -120,7 +117,6 @@ export class BaseClient {
   async createSignatureRequest(
     options: CreateSignatureRequestOptions,
   ): Promise<SignatureRequest> {
-    //TODO expand with all the options
     const response = await this.fetch<SignatureRequest>("/signature_requests", {
       method: "POST",
       body: options,
@@ -128,6 +124,12 @@ export class BaseClient {
     return response;
   }
 
+  /**
+   * 
+   * @param signatureRequestId 
+   * @param metadata 
+   * @returns 
+   */
   async addSignatureRequestMetadata(
     signatureRequestId: string,
     metadata: SignatureRequestMetadata,
@@ -142,7 +144,6 @@ export class BaseClient {
     return response;
   }
 
-  //TODO add mulltiple files with 1 function call support
   /**
    * Adds a document to a signature request
    * @param signatureRequestId Signature request id where to add the document
@@ -210,7 +211,6 @@ export class BaseClient {
     return response;
   }
 
-  //TODO add multiple signers with 1 function call support
   /**
    * Adds a person that needs to sign the document to a signature request
    * @param signatureRequestId
@@ -232,6 +232,14 @@ export class BaseClient {
     return response;
   }
 
+  /**
+   * 
+   * @param signatureRequestId 
+   * @param signerIds 
+   * @param documentId 
+   * @param options 
+   * @returns 
+   */
   async addSignerConsent(
     signatureRequestId: string,
     signerIds: string[],
